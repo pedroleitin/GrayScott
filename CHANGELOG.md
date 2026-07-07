@@ -6,10 +6,48 @@ All notable changes to Gray-Scott Studio. Format loosely follows
 ## [Unreleased]
 
 ### Planned
-- GPU port of the simulation: **WebGL2** and **WebGPU** versions (hybrid — sim on the
-  GPU, read back only for export). See `BACKLOG.md` §4.
+- Halftone line refinement / export options. See `BACKLOG.md`.
+
+## 2026-07-06
+
+### Changed
+- **`gray_scott_webgl.html` is now the primary app** (WebGL2 GPU engine). The original
+  CPU version (`gray_scott_smooth_svg.html`) and the WebGPU port (`gray_scott_webgpu.html`)
+  moved to `archive/`, kept for reference. Docs (`README`, `CLAUDE.md`, `copilot.md`)
+  updated to match.
+- **Resolution changes no longer clear the canvas** — the current field is resampled
+  (bilinear readback) instead of wiped. Resolution ceiling raised to **2048²**.
+
+### Added
+- **Detail ramp** section — a spatial feature-size gradient (Amount + Horiz / Vert /
+  Radial), implemented as a factor `s = 1 - ramp·t` on the Laplacian in the update
+  shader (finer features where `s` is smaller; stays stable since `s ≤ 1`).
+- **Colors** section — Foreground / Background pickers (hex field + swatch, GRID-GEN-2
+  style) that recolor the pattern **instantly without recomputing**, via an SVG
+  `feComponentTransfer` **gradient map** layered after blur+contrast (also fixes the
+  white fringe the contrast filter produced at edges).
+- **Image morph** — drop a second image (B) to blend the halftone luminance A → B with
+  a **Blend** slider; the pattern reorganizes live between the two images. Includes:
+  **Cross** (linear luminance) and **Dissolve** (spatial reveal) styles; a **Play**
+  button with eased (smoothstep) sweep, a **Speed** control and a **Loop** toggle;
+  **Swap A↔B** and **Remove B**; and **Export morph** (PNG sequence sweeping the blend).
+- **Brush size** slider + a **cursor ring preview** showing the radius to be applied.
+- **Clear** button (next to Fill) — removes text + brush walls but keeps the pattern
+  and every other setting.
+- **Invert** checkbox in the text collider (swaps the colors inside the text);
+  **Border** became a checkbox; **image thumbnail preview** in the drop zone.
+- **FPS / steps status badge**.
+- Pattern chips redesigned as bold uppercase initials (Waves / Mazes last).
 
 ## 2026-07-03
+
+### Added (archived engines)
+- **WebGL2 GPU engine** (`gray_scott_webgl.html`): A/B in RGBA32F ping-pong textures,
+  update fragment shader with `texelFetch` + toroidal wrap; 60 fps up to 2048².
+- **WebGPU engine** (`gray_scott_webgpu.html`): WGSL compute shaders, storage-buffer
+  ping-pong, async `mapAsync` readback for export. Kept as a comparison.
+
+## 2026-07-03 (UI)
 
 ### Changed
 - **UI redesigned** from Material 3 to the *GRID-GEN-2* design language (plain CSS):
