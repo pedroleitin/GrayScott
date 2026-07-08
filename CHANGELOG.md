@@ -8,6 +8,27 @@ All notable changes to Gray-Scott Studio. Format loosely follows
 ### Planned
 - Halftone line refinement / export options. See `BACKLOG.md`.
 
+## 2026-07-07
+
+### Changed
+- **Menu sections are now a multi-open accordion** (SVG_DRAW / GRID-GEN-2 style): each
+  section header toggles independently with a rotating chevron; content animates via CSS
+  `grid-template-rows`. **Detail ramp**, **Text collider** and **Image halftone** start
+  collapsed.
+- **Sliders restyled to the SVG_DRAW pill bar** — a filled pill with the label and value
+  inside and inverted text over the fill (drag / click / keyboard). The native
+  `<input type=range>` is kept hidden as state, so all handlers keep working.
+- **Selects restyled to the SVG_DRAW combobox** — pill button + floating menu with a
+  caret; the native `<select>` stays hidden as state. The menu uses fixed positioning so
+  it isn't clipped by the accordion, and flips up when short on space below.
+- **Control section replaced by two floating buttons** (Reset / Pause) pinned to the
+  bottom of the viewport, centered over the canvas.
+- **New defaults**: Speed **50**, Resolution **512**, Blur **3**.
+
+### Fixed
+- Accordion collapse no longer clipped the last slider's thumb (moved the panel padding
+  into a clipped child).
+
 ## 2026-07-06
 
 ### Changed

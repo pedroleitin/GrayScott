@@ -27,13 +27,31 @@ body{font-family:'Outfit',sans-serif;color:var(--c-text);background:var(--c-bg);
 .menu-scroll::-webkit-scrollbar-track{background:transparent}
 .menu-scroll::-webkit-scrollbar-thumb{background:var(--c-border-light);border-radius:99px}
 .menu-scroll::-webkit-scrollbar-thumb:hover{background:var(--c-border-medium)}
-.section{border-bottom:1px solid var(--c-sep);padding:14px 20px;display:flex;flex-direction:column;gap:11px}
+.section{border-bottom:1px solid var(--c-sep);padding:14px 20px;display:flex;flex-direction:column}
 .section:last-child{border-bottom:none}
 .section-title{font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;opacity:.4}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;user-select:none}
+.section-head:hover .section-title{opacity:.7}
+.section-chevron{width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:9999px;color:var(--c-text);opacity:.4}
+.section-head:hover .section-chevron{opacity:1;background:rgba(127,127,127,.12)}
+.section.open>.section-head .section-chevron{transform:rotate(180deg)}
+.section-body{display:grid;grid-template-rows:0fr;min-height:0}
+.section.open>.section-body{grid-template-rows:1fr}
+.section-body>.section-body-inner{overflow:hidden;min-height:0}
+.section-body-inner>.section-body-pad{display:flex;flex-direction:column;gap:11px;padding-top:11px;padding-bottom:7px}
+.acc-ready .section-body{transition:grid-template-rows .22s ease}
+.acc-ready .section-chevron{transition:transform .2s ease,opacity .15s ease,background .15s ease}
 .sl-row{display:flex;flex-direction:column;gap:7px}
 .sl-label{display:flex;justify-content:space-between;align-items:center}
 .sl-name{font-size:13px;opacity:.65}
 .sl-val{font-family:'Ubuntu Mono',monospace;font-size:12px;color:var(--c-muted)}
+.rng{position:relative;height:34px;border-radius:99px;background:var(--c-border-light);overflow:hidden;cursor:pointer;user-select:none;touch-action:none;outline:none}
+.rng:focus-visible{box-shadow:0 0 0 2px var(--c-accent)}
+.rng-content{position:absolute;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 15px;box-sizing:border-box;font-size:13px;white-space:nowrap;pointer-events:none;color:var(--c-text)}
+.rng-content .rng-label{opacity:.8}
+.rng-fill{position:absolute;left:0;top:0;height:100%;width:0;background:var(--c-text);overflow:hidden;pointer-events:none}
+.rng-content--light{color:var(--c-panel)}
+.rng-val{font-family:'Ubuntu Mono',monospace;font-weight:700;font-size:13px;color:inherit;font-variant-numeric:tabular-nums}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:var(--c-border-light);border-radius:2px;outline:none;cursor:pointer}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--c-text);cursor:pointer;transition:background .15s,transform .15s}
 input[type=range]:hover::-webkit-slider-thumb{background:var(--c-accent);transform:scale(1.15)}
@@ -56,6 +74,23 @@ input[type=range]:hover::-moz-range-thumb{background:var(--c-accent)}
 .field{width:100%;font-family:'Outfit',sans-serif;font-size:13px;padding:8px 12px;border-radius:10px;background:var(--c-btn-bg);border:1.5px solid var(--c-border-light);color:var(--c-text);outline:none;transition:border-color .2s}
 .field:focus{border-color:var(--c-border-medium)}
 select.field{cursor:pointer}
+/* Botões flutuantes (Control) — base do navegador, centralizados sobre o canvas */
+#float-controls{position:fixed;bottom:22px;left:360px;right:10px;display:flex;justify-content:center;gap:10px;z-index:45;pointer-events:none}
+#float-controls .btn{flex:0 0 auto;min-width:104px;pointer-events:auto;box-shadow:0 3px 14px rgba(0,0,0,.16)}
+@media(max-width:640px){#float-controls{left:10px;right:10px;bottom:14px}}
+/* Combobox estilo SVG_DRAW */
+.dd{position:relative;width:100%}
+.dd-btn{width:100%;font-family:'Outfit',sans-serif;font-size:13px;padding:8px 12px;border-radius:10px;background:var(--c-btn-bg);border:1.5px solid var(--c-border-light);color:var(--c-text);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;transition:border-color .2s,background .2s}
+.dd-btn:hover,.dd.open .dd-btn{border-color:var(--c-border-medium)}
+.dd-btn b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dd-caret{flex-shrink:0;display:flex;color:var(--c-muted);transition:transform .2s}
+.dd.open .dd-caret{transform:rotate(180deg)}
+.dd-menu{position:fixed;display:none;flex-direction:column;gap:2px;padding:6px;background:var(--c-panel);border:1.5px solid var(--c-border-medium);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:1000;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--c-border-light) transparent}
+.dd.open .dd-menu{display:flex}
+.dd-item{background:none;border:none;color:var(--c-text);border-radius:8px;padding:7px 12px;font-size:13px;font-family:'Outfit',sans-serif;cursor:pointer;text-align:left;white-space:nowrap}
+.dd-item:hover{background:var(--c-accent);color:#414141}
+.dd-item.active{background:var(--c-text);color:var(--c-panel);font-weight:600}
+.dd-item.active:hover{background:var(--c-accent);color:#414141}
 .inline-row{display:flex;align-items:center;gap:10px}
 .inline-label{font-size:12px;opacity:.6;flex-shrink:0}
 .drop-zone{border:1.5px dashed var(--c-border-medium);border-radius:12px;padding:18px 12px;text-align:center;font-size:12px;line-height:1.5;color:var(--c-muted);cursor:pointer;transition:border-color .2s,background .2s,color .2s;word-break:break-all;background:var(--c-btn-bg)}
@@ -97,9 +132,9 @@ input.tgl:checked::after{left:24px;background:var(--c-text);border-color:var(--c
         <div class="section-title">Parameters</div>
         <div class="sl-row"><div class="sl-label"><span class="sl-name">Feed</span><span class="sl-val" id="vf">0.055</span></div><input type="range" id="sl-f" min="0.01" max="0.1" step="0.001" value="0.055"></div>
         <div class="sl-row"><div class="sl-label"><span class="sl-name">Kill</span><span class="sl-val" id="vk">0.062</span></div><input type="range" id="sl-k" min="0.04" max="0.07" step="0.001" value="0.062"></div>
-        <div class="sl-row"><div class="sl-label"><span class="sl-name">Speed</span><span class="sl-val" id="vspd">6</span></div><input type="range" id="sl-spd" min="1" max="50" step="1" value="6"></div>
-        <div class="sl-row"><div class="sl-label"><span class="sl-name">Resolution</span><span class="sl-val" id="vres">192</span></div><input type="range" id="sl-res" min="64" max="2048" step="32" value="192"></div>
-        <div class="sl-row"><div class="sl-label"><span class="sl-name">Blur</span><span class="sl-val" id="vblur">7.0</span></div><input type="range" id="sl-blur" min="0" max="20" step="0.5" value="7"></div>
+        <div class="sl-row"><div class="sl-label"><span class="sl-name">Speed</span><span class="sl-val" id="vspd">50</span></div><input type="range" id="sl-spd" min="1" max="50" step="1" value="50"></div>
+        <div class="sl-row"><div class="sl-label"><span class="sl-name">Resolution</span><span class="sl-val" id="vres">512</span></div><input type="range" id="sl-res" min="64" max="2048" step="32" value="512"></div>
+        <div class="sl-row"><div class="sl-label"><span class="sl-name">Blur</span><span class="sl-val" id="vblur">3.0</span></div><input type="range" id="sl-blur" min="0" max="20" step="0.5" value="3"></div>
         <div class="sl-row"><div class="sl-label"><span class="sl-name">Contrast</span><span class="sl-val" id="vcon">20</span></div><input type="range" id="sl-con" min="1" max="40" step="1" value="20"></div>
       </section>
       <section class="section">
@@ -162,10 +197,6 @@ input.tgl:checked::after{left:24px;background:var(--c-text);border-color:var(--c
         </div>
       </section>
       <section class="section">
-        <div class="section-title">Control</div>
-        <div class="btn-row"><button class="btn" id="reset-btn">Reset</button><button class="btn" id="pause-btn">Pause</button></div>
-      </section>
-      <section class="section">
         <div class="section-title">Export</div>
         <div class="btn-row"><button class="btn" id="export-btn">SVG</button><button class="btn" id="export-png-btn">PNG</button><button class="btn" id="export-seq-btn">Seq PNG</button></div>
         <select class="field" id="trace-detail"><option value="2" selected>SVG trace 2&#215; (rápido)</option><option value="3">SVG trace 3&#215;</option><option value="4">SVG trace 4&#215; (lento)</option></select>
@@ -175,6 +206,7 @@ input.tgl:checked::after{left:24px;background:var(--c-text);border-color:var(--c
   <div id="stage">
     <div id="canvas-col"><div id="canvas-wrap"><canvas id="sim"></canvas><div id="brush-cursor"></div><div id="text-overlay"><div id="drag-text">DIFFUSION</div></div></div></div>
   </div>
+  <div id="float-controls"><button class="btn" id="reset-btn">Reset</button><button class="btn" id="pause-btn">Pause</button></div>
 </div>
 <div id="fps">— fps</div>
 <button id="theme-toggle" class="eye-btn" title="Alternar tema" aria-label="Alternar tema"></button>
@@ -189,8 +221,8 @@ input.tgl:checked::after{left:24px;background:var(--c-text);border-color:var(--c
 </filter></defs></svg>
 
 <script>
-let N=192,F=0.055,k=0.062,Da=1.0,Db=0.5;
-let paused=false,speed=6,blurPx=7,contrastVal=20,wallColor='black',fontSize=160,textBorder=false,fontName='Roboto';
+let N=512,F=0.055,k=0.062,Da=1.0,Db=0.5;
+let paused=false,speed=50,blurPx=3,contrastVal=20,wallColor='black',fontSize=160,textBorder=false,fontName='Roboto';
 let rampAmt=0,rampDir=1;
 let fgColor='#000000',bgColor='#ffffff',fgRGB=[0,0,0],bgRGB=[255,255,255];
 function hex2rgb(h){const n=parseInt(h.slice(1),16);return[(n>>16)&255,(n>>8)&255,n&255];}
@@ -322,7 +354,7 @@ function resampleImages(){if(imgElA)imgLumRawA=sampleImageEl(imgElA);if(imgElB)i
 function ensureDissolve(){if(!dissolveField||dissolveField.length!==N*N){dissolveField=new Float32Array(N*N);for(let i=0;i<N*N;i++)dissolveField[i]=Math.random();}}
 function mixImages(){const a=imgLumRawA,b=imgLumRawB;if(a&&b){const n=a.length,t=blendT;imgLumRaw=new Float32Array(n);if(morphStyle==='dissolve'){ensureDissolve();const df=dissolveField,soft=0.18;for(let i=0;i<n;i++){let l=(t-df[i])/soft+0.5;l=l<0?0:l>1?1:l;imgLumRaw[i]=a[i]*(1-l)+b[i]*l;}}else{for(let i=0;i<n;i++)imgLumRaw[i]=a[i]*(1-t)+b[i]*t;}}else imgLumRaw=a||b||null;updateBlendUI();applyImageAdjust();}
 function updateBlendUI(){document.getElementById('blend-wrap').style.display=(imgLumRawA&&imgLumRawB)?'flex':'none';}
-function setBlend(v){blendT=v;document.getElementById('sl-blend').value=v;document.getElementById('vblend').textContent=v.toFixed(2);mixImages();}
+function setBlend(v){blendT=v;var sb=document.getElementById('sl-blend');sb.value=v;document.getElementById('vblend').textContent=v.toFixed(2);if(sb._rngSync)sb._rngSync();mixImages();}
 function easeInOut(e){return e*e*(3-2*e);}
 function stopBlendAnim(){if(blendAnim){cancelAnimationFrame(blendAnim);blendAnim=null;}document.getElementById('blend-play').textContent='Play';}
 function toggleBlendAnim(){if(blendAnim){stopBlendAnim();return;}if(!(imgLumRawA&&imgLumRawB))return;document.getElementById('blend-play').textContent='Stop';let from=blendT,to=blendT>=0.999?0:1,t0=performance.now();const tick=()=>{const raw=Math.min(1,(performance.now()-t0)/morphDur);setBlend(from+(to-from)*easeInOut(raw));if(raw<1){blendAnim=requestAnimationFrame(tick);}else if(morphLoop){from=to;to=from>=0.999?0:1;t0=performance.now();blendAnim=requestAnimationFrame(tick);}else stopBlendAnim();};blendAnim=requestAnimationFrame(tick);}
@@ -386,7 +418,7 @@ document.getElementById('brush-seed').addEventListener('click',()=>setBrush('see
 document.getElementById('brush-wall').addEventListener('click',()=>setBrush('wall','brush-wall'));
 document.getElementById('brush-erase').addEventListener('click',()=>setBrush('erase','brush-erase'));
 document.getElementById('pause-btn').addEventListener('click',function(){paused=!paused;this.textContent=paused?'Resume':'Pause';});
-document.querySelectorAll('.chip').forEach(btn=>{btn.addEventListener('click',function(){document.querySelectorAll('.chip').forEach(b=>b.classList.remove('active'));this.classList.add('active');F=parseFloat(this.dataset.f);k=parseFloat(this.dataset.k);document.getElementById('sl-f').value=F;document.getElementById('vf').textContent=F.toFixed(3);document.getElementById('sl-k').value=k;document.getElementById('vk').textContent=k.toFixed(3);userWall.fill(0);wall.fill(0);active=null;dragEl.classList.remove('visible');init();});});
+document.querySelectorAll('.chip').forEach(btn=>{btn.addEventListener('click',function(){document.querySelectorAll('.chip').forEach(b=>b.classList.remove('active'));this.classList.add('active');F=parseFloat(this.dataset.f);k=parseFloat(this.dataset.k);document.getElementById('sl-f').value=F;document.getElementById('vf').textContent=F.toFixed(3);document.getElementById('sl-k').value=k;document.getElementById('vk').textContent=k.toFixed(3);['sl-f','sl-k'].forEach(function(id){var e=document.getElementById(id);if(e._rngSync)e._rngSync();});userWall.fill(0);wall.fill(0);active=null;dragEl.classList.remove('visible');init();});});
 
 function buildDarkField(){const f=new Float32Array(N*N);const gs=htMode==='gs'&&imgLum;for(let i=0;i<N*N;i++){const w=wall[i];if(w===2)f[i]=wallColor==='black'?0:1;else if(w)f[i]=wallColor==='black'?1:0;else{const thr=gs?gsBase+gsSlope*imgLum[i]:THRESH;f[i]=B[i]>thr?1:0;}}return f;}
 function boxBlur(input,W,H,r,passes){let cur=new Float32Array(input);let buf=new Float32Array(W*H);for(let p=0;p<passes;p++){for(let y=0;y<H;y++)for(let x=0;x<W;x++){let sum=0,n=0;for(let dx=-r;dx<=r;dx++){const sx=x+dx;if(sx>=0&&sx<W){sum+=cur[y*W+sx];n++;}}buf[y*W+x]=sum/n;}for(let y=0;y<H;y++)for(let x=0;x<W;x++){let sum=0,n=0;for(let dy=-r;dy<=r;dy++){const sy=y+dy;if(sy>=0&&sy<H){sum+=buf[sy*W+x];n++;}}cur[y*W+x]=sum/n;}}return cur;}
@@ -564,6 +596,130 @@ document.getElementById('export-morph-btn').addEventListener('click',function(){
 document.getElementById('export-seq-btn').addEventListener('click',function(){
   runSeqExport(this,120,'gray-scott-sequence.zip',null);
 });
+</script>
+
+<script>
+// Sliders estilo SVG_DRAW: barra-pílula preenchida com label+valor dentro e texto
+// invertido sobre o preenchimento. Mantém o <input type=range> escondido como estado
+// (bindSlider/handlers/.value continuam valendo); a barra dispara 'input' no input.
+(function(){
+  function buildRng(input){
+    var row=input.closest('.sl-row'); if(!row) return;
+    var nameEl=row.querySelector('.sl-name'), valEl=row.querySelector('.sl-val');
+    var name=nameEl?nameEl.textContent:'';
+    var rng=document.createElement('div'); rng.className='rng'; rng.tabIndex=0; rng.setAttribute('role','slider');
+    var base=document.createElement('div'); base.className='rng-content';
+    var bl=document.createElement('span'); bl.className='rng-label'; bl.textContent=name; base.appendChild(bl);
+    if(valEl){valEl.classList.add('rng-val'); base.appendChild(valEl);}
+    var fill=document.createElement('div'); fill.className='rng-fill';
+    var light=document.createElement('div'); light.className='rng-content rng-content--light';
+    var ll=document.createElement('span'); ll.className='rng-label'; ll.textContent=name;
+    var lv=document.createElement('span'); lv.className='rng-val';
+    light.appendChild(ll); light.appendChild(lv); fill.appendChild(light);
+    rng.appendChild(base); rng.appendChild(fill);
+    input.style.display='none'; rng.appendChild(input);
+    row.parentNode.insertBefore(rng,row); row.parentNode.removeChild(row);
+    function sync(){
+      var mn=parseFloat(input.min), mx=parseFloat(input.max), v=parseFloat(input.value);
+      var pct=mx>mn?((v-mn)/(mx-mn))*100:0; pct=pct<0?0:pct>100?100:pct;
+      fill.style.width=pct+'%';
+      light.style.width=rng.clientWidth+'px';
+      lv.textContent=valEl?valEl.textContent:v;
+    }
+    input._rngSync=sync;
+    input.addEventListener('input',sync);
+    function decOf(step){var s=String(step);return s.indexOf('.')>=0?s.split('.')[1].length:0;}
+    function setFromX(clientX){
+      var r=rng.getBoundingClientRect(); var frac=(clientX-r.left)/r.width; frac=frac<0?0:frac>1?1:frac;
+      var mn=parseFloat(input.min), mx=parseFloat(input.max), step=parseFloat(input.step)||1;
+      var val=mn+frac*(mx-mn); val=Math.round(val/step)*step;
+      val=parseFloat(val.toFixed(decOf(step))); val=val<mn?mn:val>mx?mx:val;
+      if(val!==parseFloat(input.value)){input.value=val; input.dispatchEvent(new Event('input',{bubbles:true}));}
+      else sync();
+    }
+    var dragging=false;
+    rng.addEventListener('pointerdown',function(e){dragging=true; rng.focus(); try{rng.setPointerCapture(e.pointerId);}catch(_){} setFromX(e.clientX); e.preventDefault();});
+    rng.addEventListener('pointermove',function(e){if(dragging)setFromX(e.clientX);});
+    function endDrag(e){dragging=false; try{rng.releasePointerCapture(e.pointerId);}catch(_){}}
+    rng.addEventListener('pointerup',endDrag); rng.addEventListener('pointercancel',endDrag);
+    rng.addEventListener('keydown',function(e){
+      var step=parseFloat(input.step)||1, mn=parseFloat(input.min), mx=parseFloat(input.max), v=parseFloat(input.value), nv=v;
+      if(e.key==='ArrowLeft'||e.key==='ArrowDown')nv=v-step; else if(e.key==='ArrowRight'||e.key==='ArrowUp')nv=v+step;
+      else if(e.key==='Home')nv=mn; else if(e.key==='End')nv=mx; else return;
+      nv=parseFloat((nv<mn?mn:nv>mx?mx:nv).toFixed(decOf(step)));
+      if(nv!==v){input.value=nv; input.dispatchEvent(new Event('input',{bubbles:true}));} e.preventDefault();
+    });
+    sync();
+  }
+  document.querySelectorAll('input[type=range]').forEach(buildRng);
+  window.addEventListener('resize',function(){document.querySelectorAll('input[type=range]').forEach(function(i){i._rngSync&&i._rngSync();});});
+})();
+</script>
+
+<script>
+// Combobox estilo SVG_DRAW: botão-pílula + menu flutuante. Mantém o <select> escondido
+// como estado (o handler 'change' continua valendo). Menu com position:fixed p/ escapar
+// do overflow:hidden do acordeon; fecha em clique-fora / Esc / scroll.
+(function(){
+  var CARET='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  function closeAll(){document.querySelectorAll('.dd.open').forEach(function(d){d.classList.remove('open');});}
+  function build(sel){
+    var dd=document.createElement('div'); dd.className='dd';
+    var btn=document.createElement('button'); btn.type='button'; btn.className='dd-btn';
+    var lbl=document.createElement('b');
+    var caret=document.createElement('span'); caret.className='dd-caret'; caret.innerHTML=CARET;
+    btn.appendChild(lbl); btn.appendChild(caret);
+    var menu=document.createElement('div'); menu.className='dd-menu';
+    var items=Array.prototype.map.call(sel.options,function(o){
+      var it=document.createElement('button'); it.type='button'; it.className='dd-item'; it.textContent=o.textContent; it.dataset.value=o.value;
+      it.addEventListener('click',function(e){e.stopPropagation(); if(sel.value!==o.value){sel.value=o.value; sel.dispatchEvent(new Event('change',{bubbles:true}));} setLabel(); dd.classList.remove('open');});
+      menu.appendChild(it); return it;
+    });
+    function setLabel(){var o=sel.options[sel.selectedIndex]; lbl.textContent=o?o.textContent:''; items.forEach(function(it){it.classList.toggle('active',it.dataset.value===sel.value);});}
+    function place(){
+      var r=btn.getBoundingClientRect();
+      menu.style.left=r.left+'px'; menu.style.width=r.width+'px'; menu.style.top='auto'; menu.style.bottom='auto'; menu.style.maxHeight='none';
+      var mh=menu.scrollHeight, below=window.innerHeight-r.bottom-12, above=r.top-12;
+      if(below>=mh||below>=above){menu.style.top=(r.bottom+6)+'px'; menu.style.maxHeight=Math.max(120,below)+'px';}
+      else{menu.style.bottom=(window.innerHeight-r.top+6)+'px'; menu.style.maxHeight=Math.max(120,above)+'px';}
+    }
+    btn.addEventListener('click',function(e){e.stopPropagation(); var wasOpen=dd.classList.contains('open'); closeAll(); if(!wasOpen){dd.classList.add('open'); place();}});
+    sel.style.display='none';
+    sel.parentNode.insertBefore(dd,sel);
+    dd.appendChild(btn); dd.appendChild(menu); dd.appendChild(sel);
+    sel.addEventListener('change',setLabel);
+    setLabel();
+  }
+  document.querySelectorAll('select.field').forEach(build);
+  document.addEventListener('click',closeAll);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAll();});
+  window.addEventListener('resize',closeAll);
+  var ms=document.querySelector('.menu-scroll'); if(ms)ms.addEventListener('scroll',closeAll,true);
+})();
+</script>
+
+<script>
+// Accordion do menu (multi-open, estilo GRID-GEN-2). Reestrutura cada .section em
+// head clicável + corpo colapsável; move os nós (não recria), preservando ids/handlers.
+(function(){
+  var CHEV='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  document.querySelectorAll('.section').forEach(function(sec){
+    var title=sec.querySelector('.section-title');if(!title)return;
+    var head=document.createElement('div');head.className='section-head';
+    sec.insertBefore(head,title);head.appendChild(title);
+    var chev=document.createElement('span');chev.className='section-chevron';chev.innerHTML=CHEV;head.appendChild(chev);
+    var body=document.createElement('div');body.className='section-body';
+    var inner=document.createElement('div');inner.className='section-body-inner';body.appendChild(inner);
+    var pad=document.createElement('div');pad.className='section-body-pad';inner.appendChild(pad);
+    var node=head.nextSibling;while(node){var next=node.nextSibling;pad.appendChild(node);node=next;}
+    sec.appendChild(body);
+    var CLOSED={'Detail ramp':1,'Text collider':1,'Image halftone':1};
+    if(!CLOSED[title.textContent.trim()])sec.classList.add('open');
+    head.addEventListener('click',function(){sec.classList.toggle('open');});
+  });
+  // habilita as transições só após o layout inicial (evita "flash" de expansão no load)
+  requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.add('acc-ready');});});
+})();
 </script>
 
 <script>
