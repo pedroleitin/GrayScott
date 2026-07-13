@@ -43,14 +43,15 @@ app back to them.
   `A=1, B=0`. **Detail ramp**: a spatial factor `s = 1 - u_ramp*t` (t = horiz/vert/radial
   position) multiplies the Laplacian — smaller `s` = finer features. `s ≤ 1` keeps
   diffusion under the CFL limit, so it stays stable.
-- Display in `_FS_DISPLAY` (Y-flip, threshold, wallColor/border/halftone). Paint: `Seed`
-  = GPU `splat` shader; `Wall`/`Erase` = CPU `wall` edit + `uploadWall`.
-- Smooth look = **two CSS filters split across elements** (Safari drops a mixed
-  `blur()/contrast()/url()` chain, so they can't share one element): `blur() contrast()`
-  on the canvas `#sim`, and the SVG gradient-map `url(#gradmap)` on the wrapper `#sim-fx`.
-  `#gradmap` is an `feComponentTransfer` (fg at luminance 0, bg at 1) — recoloring updates
-  its `tableValues` **and renames the `<filter>` id** (so Safari re-evaluates instead of
-  caching), never touching `A`/`B`/`step`.
+- Paint: `Seed` = GPU `splat` shader; `Wall`/`Erase` = CPU `wall` edit + `uploadWall`.
+- **Smooth look is all on the GPU** (Safari applies neither `filter: url(#svg)` nor
+  `ctx.filter`, so no CSS/SVG filters). `render()` runs at the **display resolution**
+  `RW = clientWidth·dpr` (not `N`) into `fxTex`/`fxFbo` RGBA16F ping-pong: `_FS_DISPLAY`
+  upsamples the `N` field (bilinear, or nearest when the **Pixelate** toggle is on) and
+  thresholds → binary; `_FS_BLUR` = separable Gaussian (radius from `blurPx·RW/clientWidth`,
+  capped 48 taps); `_FS_COMPOSE` applies contrast (pivot 0.5) + the fg/bg gradient map and
+  draws to the canvas. Colors/blur/contrast are just uniforms — changing them re-renders,
+  never touches `A`/`B`/`step`. `resizeCanvas()` sizes the canvas + `fxTex` to `RW`.
 - **Resolution change resamples** the current field (readback + bilinear) instead of
   clearing. `Fill` seeds a grid of disks; `Clear` wipes text + brush walls only.
 
@@ -62,8 +63,8 @@ bakes in text/walls/halftone) → `boxBlur` → `upsampleN(…, F)` where `F = t
 close) → `resampleLoop` → `catmullRomToBezier` → `<path fill-rule="evenodd">` with
 `fill="${fgColor}"` on `fill="${bgColor}"`. The export blur uses a **fixed reference**
 `BLUR_REF=512` so the same pattern always exports identically regardless of window size.
-PNG export (`renderPNGCanvas`) mirrors the on-screen size and re-applies blur+contrast +
-a manual per-pixel gradient map so PNG colors match the screen.
+PNG export (`renderPNGCanvas`) just `render()`s and scales the finished canvas (color +
+blur + contrast are already baked in on the GPU) to the target size.
 
 ## Design system (GRID-GEN-2 style, plain CSS)
 

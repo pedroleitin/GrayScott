@@ -31,10 +31,11 @@ Earlier engines live in `archive/` and are not the app: `gray_scott_smooth_svg.h
 - Sim (GPU): `A`/`B` in 2× RGBA32F ping-pong textures; update fragment shader with a
   5-point Laplacian (`texelFetch`, toroidal wrap), coefs 0.2/0.1, `THRESH=0.18`.
   Walls/image in R32F textures. **Detail ramp** = spatial factor `s=1-u_ramp*t` on the
-  Laplacian (finer features where `s` is smaller). Smooth look = **split CSS filters**
-  (Safari drops a mixed chain): `blur() contrast()` on `#sim`, SVG gradient-map
-  `url(#gradmap)` on the wrapper `#sim-fx`. Recolor updates the map's `tableValues` and
-  renames the `<filter>` id (so Safari re-evaluates); never recomputes the sim.
+  Laplacian (finer features where `s` is smaller). **Smooth look is all on the GPU**
+  (Safari applies no CSS/SVG `url()` filter nor `ctx.filter`): `render()` runs at display
+  res `RW=clientWidth·dpr` — display upsamples the field (bilinear, or nearest with the
+  **Pixelate** toggle), then a separable Gaussian blur, then a compose pass does contrast +
+  fg/bg gradient map to the canvas. Blur/contrast/colors are uniforms; never recomputes the sim.
 - Interaction: mouse/touch drag paints via `paint()` (Seed = GPU splat; Wall/Erase =
   CPU `wall` + `uploadWall`), with an adjustable brush size + cursor ring. Text overlay
   `#drag-text` is draggable, with an Invert checkbox. `Fill` seeds the grid; `Clear`

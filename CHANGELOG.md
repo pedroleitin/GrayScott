@@ -10,6 +10,20 @@ All notable changes to Gray-Scott Studio. Format loosely follows
 
 ## 2026-07-13
 
+### Fixed
+- **Safari: blur / contrast / colors now render on-screen and in PNG.** Safari applies
+  neither `filter: url(#svg)` nor `ctx.filter`, so the whole smooth-look pipeline moved to
+  the **GPU** (display upsample → separable Gaussian blur → contrast + gradient-map compose).
+  Rendering happens at the **display resolution** (`clientWidth·dpr`), so edges are crisp on
+  retina instead of pixelated. PNG export just captures the finished canvas.
+
+### Added
+- **Pixelate** toggle (Parameters) — nearest-sample the field for hard per-cell blocks
+  instead of the smooth (bilinear) edges.
+- `.claude/launch.json` — static dev server config (`python3 -m http.server 8000`).
+
+## 2026-07-13
+
 ### Changed
 - **The app file is now `index.html`** (was `gray_scott_webgl.html`); docs updated.
 - Added a **sidebar footer** showing `WIP` and the version.
