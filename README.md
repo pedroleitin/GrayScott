@@ -49,7 +49,7 @@ The app uses WebGL2 float textures, which most browsers only allow over `http(s)
 (not `file://`). Serve it:
 
 ```bash
-python3 -m http.server 8000   # then open http://localhost:8000/gray_scott_webgl.html
+python3 -m http.server 8000   # then open http://localhost:8000/index.html
 ```
 
 - **Paint**: click-drag on the canvas (mode set in the *Brush* section).
@@ -72,7 +72,7 @@ python3 -m http.server 8000   # then open http://localhost:8000/gray_scott_webgl
 ## Project structure
 
 ```
-gray_scott_webgl.html         # the app (everything is here) — WebGL2 engine
+index.html         # the app (everything is here) — WebGL2 engine
 README.md · CHANGELOG.md · BACKLOG.md
 CLAUDE.md · copilot.md        # instructions for AI coding assistants
 archive/                      # earlier versions, kept for reference:

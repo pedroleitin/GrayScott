@@ -1,6 +1,6 @@
-# Backlog — gray_scott_webgl.html
+# Backlog — index.html
 
-Itens em aberto para o app WebGL2 (`gray_scott_webgl.html`). Concluídos ficam
+Itens em aberto para o app WebGL2 (`index.html`). Concluídos ficam
 resumidos no rodapé; o histórico detalhado está no `CHANGELOG.md`.
 
 ## 1. Export — opções e qualidade
@@ -29,7 +29,7 @@ resumidos no rodapé; o histórico detalhado está no `CHANGELOG.md`.
   sem pesar o loop em tempo real.
 
 ## Concluídos (resumo — detalhes no `CHANGELOG.md`)
-- **Port GPU:** motor WebGL2 (`gray_scott_webgl.html`, app principal) e WebGPU
+- **Port GPU:** motor WebGL2 (`index.html`, app principal) e WebGPU
   (`archive/gray_scott_webgpu.html`, comparação). Sim 100% na GPU, 60fps até 2048².
 - **Cores:** Foreground/Background com recolor instantâneo via gradient map (sem
   recalcular o sim); Border e Invert como checkbox.

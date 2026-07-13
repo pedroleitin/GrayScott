@@ -8,6 +8,19 @@ All notable changes to Gray-Scott Studio. Format loosely follows
 ### Planned
 - Halftone line refinement / export options. See `BACKLOG.md`.
 
+## 2026-07-13
+
+### Changed
+- **The app file is now `index.html`** (was `gray_scott_webgl.html`); docs updated.
+- Added a **sidebar footer** showing `WIP` and the version.
+
+### Fixed
+- **Safari: blur / contrast / colors now work.** Safari drops a `filter` declaration that
+  mixes `blur()/contrast()` with an SVG `url(#…)` reference, so the on-screen filters were
+  split — `blur() contrast()` on the canvas, the gradient-map on a `#sim-fx` wrapper. The
+  gradient-map `<filter>` is also renamed on each recolor so Safari re-evaluates it instead
+  of caching (colors were not updating on color change).
+
 ## 2026-07-07
 
 ### Changed

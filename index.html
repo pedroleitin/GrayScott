@@ -12,6 +12,7 @@ body{font-family:'Outfit',sans-serif;color:var(--c-text);background:var(--c-bg);
 [data-theme="dark"] #stage{background-image:url("data:image/svg+xml,%3Csvg width='25' height='25' viewBox='0 0 25 25' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle opacity='0.5' cx='12.5' cy='12.5' r='1.25' fill='%23333330'/%3E%3C/svg%3E")}
 #canvas-col{height:100%;display:flex;align-items:center;justify-content:center;min-width:0}
 #canvas-wrap{position:relative;width:100%;aspect-ratio:1;max-width:100%;max-height:100%;border-radius:15px;overflow:hidden;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.10)}
+#sim-fx{position:absolute;inset:0}
 #sim{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
 #text-overlay{position:absolute;inset:0;pointer-events:none}
 #drag-text{pointer-events:all;cursor:grab;user-select:none;font-family:'Roboto',sans-serif;font-weight:700;white-space:nowrap;padding:2px 8px;position:absolute;display:none;left:50%;top:50%;transform:translate(-50%,-50%);border:1.5px dashed rgba(255,200,0,.85);border-radius:6px;background:rgba(255,255,255,.15);backdrop-filter:blur(2px)}
@@ -22,6 +23,9 @@ body{font-family:'Outfit',sans-serif;color:var(--c-text);background:var(--c-bg);
 .menu-head{padding:16px 20px 13px;border-bottom:1px solid var(--c-sep);display:flex;align-items:baseline;justify-content:space-between}
 .menu-title{font-weight:600;font-size:25px;line-height:1;letter-spacing:-.01em}
 .menu-ver{font-size:12px;font-weight:500;opacity:.35;letter-spacing:.12em;text-transform:uppercase}
+.menu-foot{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-top:1px solid var(--c-sep);opacity:.4}
+.menu-foot .wip{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
+.menu-foot .ver{font-family:'Ubuntu Mono',monospace;font-size:11px}
 .menu-scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:var(--c-border-light) transparent}
 .menu-scroll::-webkit-scrollbar{width:4px}
 .menu-scroll::-webkit-scrollbar-track{background:transparent}
@@ -202,9 +206,10 @@ input.tgl:checked::after{left:24px;background:var(--c-text);border-color:var(--c
         <select class="field" id="trace-detail"><option value="2" selected>SVG trace 2&#215; (rápido)</option><option value="3">SVG trace 3&#215;</option><option value="4">SVG trace 4&#215; (lento)</option></select>
       </section>
     </div>
+    <div class="menu-foot"><span class="wip">WIP</span><span class="ver">v0.9.0</span></div>
   </aside>
   <div id="stage">
-    <div id="canvas-col"><div id="canvas-wrap"><canvas id="sim"></canvas><div id="brush-cursor"></div><div id="text-overlay"><div id="drag-text">DIFFUSION</div></div></div></div>
+    <div id="canvas-col"><div id="canvas-wrap"><div id="sim-fx"><canvas id="sim"></canvas></div><div id="brush-cursor"></div><div id="text-overlay"><div id="drag-text">DIFFUSION</div></div></div></div>
   </div>
   <div id="float-controls"><button class="btn" id="reset-btn">Reset</button><button class="btn" id="pause-btn">Pause</button></div>
 </div>
@@ -270,8 +275,13 @@ function allocate(){A=new Float32Array(N*N);B=new Float32Array(N*N);wall=new Uin
  stateTex=[];stateFbo=[];for(let i=0;i<2;i++){const t=_mkTex(gl.RGBA32F,gl.RGBA,gl.FLOAT);const f=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,f);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,t,0);stateTex.push(t);stateFbo.push(f);}
  wallTex=_mkTex(gl.R32F,gl.RED,gl.FLOAT);imgTex=_mkTex(gl.R32F,gl.RED,gl.FLOAT);src=0;rdbuf=new Float32Array(N*N*4);gl.bindFramebuffer(gl.FRAMEBUFFER,null);}
 function resizeCanvas(){simC.width=N;simC.height=N;}
-function applyFilter(){simC.style.filter=`blur(${blurPx}px) contrast(${contrastVal}) url(#gradmap)`;}
-function updateGradMap(){document.getElementById('gm-r').setAttribute('tableValues',`${fgRGB[0]/255} ${bgRGB[0]/255}`);document.getElementById('gm-g').setAttribute('tableValues',`${fgRGB[1]/255} ${bgRGB[1]/255}`);document.getElementById('gm-b').setAttribute('tableValues',`${fgRGB[2]/255} ${bgRGB[2]/255}`);applyFilter();}
+// Safari descarta a declaração inteira se blur/contrast forem misturados com url(#svg);
+// por isso separamos: funções no canvas, gradient-map (SVG) no wrapper #sim-fx.
+// gradId muda a cada updateGradMap: renomear o <filter> força o Safari a re-avaliar o
+// gradient-map (ele não repinta ao mudar só os tableValues); no-flash, sem cache.
+let gradId='gradmap',gradN=0;
+function applyFilter(){simC.style.filter=`blur(${blurPx}px) contrast(${contrastVal})`;const fx=document.getElementById('sim-fx');if(fx)fx.style.filter=`url(#${gradId})`;}
+function updateGradMap(){document.getElementById('gm-r').setAttribute('tableValues',`${fgRGB[0]/255} ${bgRGB[0]/255}`);document.getElementById('gm-g').setAttribute('tableValues',`${fgRGB[1]/255} ${bgRGB[1]/255}`);document.getElementById('gm-b').setAttribute('tableValues',`${fgRGB[2]/255} ${bgRGB[2]/255}`);const f=document.getElementById(gradId);gradId='gradmap'+(++gradN);f.setAttribute('id',gradId);applyFilter();}
 function uploadState(){const d=new Float32Array(N*N*4);for(let i=0;i<N*N;i++){d[i*4]=A[i];d[i*4+1]=B[i];d[i*4+3]=1;}gl.bindTexture(gl.TEXTURE_2D,stateTex[src]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,N,N,0,gl.RGBA,gl.FLOAT,d);}
 function uploadWall(){const d=new Float32Array(N*N);for(let i=0;i<N*N;i++)d[i]=wall[i];gl.bindTexture(gl.TEXTURE_2D,wallTex);gl.texImage2D(gl.TEXTURE_2D,0,gl.R32F,N,N,0,gl.RED,gl.FLOAT,d);}
 function uploadImg(){if(!imgLum||imgLum.length!==N*N)return;gl.bindTexture(gl.TEXTURE_2D,imgTex);gl.texImage2D(gl.TEXTURE_2D,0,gl.R32F,N,N,0,gl.RED,gl.FLOAT,imgLum);}

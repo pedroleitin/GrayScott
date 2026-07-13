@@ -5,7 +5,7 @@ Guidance for AI coding assistants working in this repo.
 ## What this is
 
 A **single-file, dependency-free** Gray-Scott reaction–diffusion web app:
-`gray_scott_webgl.html`. Vanilla HTML/CSS/JS, no build, no framework. The simulation
+`index.html`. Vanilla HTML/CSS/JS, no build, no framework. The simulation
 runs on the GPU (**WebGL2**, fragment-shader compute over ping-pong float textures);
 the CPU only reads back for export. The whole app is one `<style>` block + one large
 `<script>` + a tiny theme-toggle `<script>`.
@@ -45,9 +45,12 @@ app back to them.
   diffusion under the CFL limit, so it stays stable.
 - Display in `_FS_DISPLAY` (Y-flip, threshold, wallColor/border/halftone). Paint: `Seed`
   = GPU `splat` shader; `Wall`/`Erase` = CPU `wall` edit + `uploadWall`.
-- Smooth look = **CSS filter** `blur(blurPx) contrast(contrastVal) url(#gradmap)` on the
-  canvas. `#gradmap` is an SVG `feComponentTransfer` **gradient map** (fg at luminance 0,
-  bg at 1) — recoloring updates its `tableValues` only, never touching `A`/`B`/`step`.
+- Smooth look = **two CSS filters split across elements** (Safari drops a mixed
+  `blur()/contrast()/url()` chain, so they can't share one element): `blur() contrast()`
+  on the canvas `#sim`, and the SVG gradient-map `url(#gradmap)` on the wrapper `#sim-fx`.
+  `#gradmap` is an `feComponentTransfer` (fg at luminance 0, bg at 1) — recoloring updates
+  its `tableValues` **and renames the `<filter>` id** (so Safari re-evaluates instead of
+  caching), never touching `A`/`B`/`step`.
 - **Resolution change resamples** the current field (readback + bilinear) instead of
   clearing. `Fill` seeds a grid of disks; `Clear` wipes text + brush walls only.
 
@@ -69,9 +72,12 @@ CSS variables on `:root`, dark mode via `[data-theme="dark"]`:
 `--c-border-medium`, `--c-btn-bg #fff`, `--c-muted`, **`--c-accent #FFC800`**.
 Fonts: **Outfit** (UI) + **Ubuntu Mono** (numeric values). Left floating menu
 (`#menu`, 340px), dotted `#stage` canvas backdrop, pill buttons that turn yellow on
-hover, yellow selection. Menu section order: Patterns · Parameters · Detail ramp ·
-Colors · Brush · Text collider · Image halftone · Control · Export. Pattern chips are
-bold uppercase initials (16px). Colors + checkboxes follow the GRID-GEN-2 hex-field +
+hover, yellow selection. Menu sections are a **multi-open accordion**; order: Patterns ·
+Parameters · Detail ramp · Colors · Brush · Text collider · Image halftone · Export
+(Detail ramp / Text collider / Image halftone start collapsed). **Reset/Pause are
+floating buttons over the canvas**, not a menu section. Sliders are the SVG_DRAW
+filled-pill widget and selects the SVG_DRAW combobox (native `input`/`select` kept hidden
+as state). Pattern chips are bold uppercase initials (16px). Colors + checkboxes follow the GRID-GEN-2 hex-field +
 circular-swatch / pill-toggle style. Keep new UI consistent — **do not reintroduce
 Material Design.**
 
